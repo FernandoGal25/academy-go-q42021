@@ -1,0 +1,5 @@
+csv:
+  path: "public/csv/file.csv"
+
+server:
+  port: 8080
