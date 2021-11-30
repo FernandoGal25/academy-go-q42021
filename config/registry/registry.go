@@ -1,25 +1,33 @@
 package registry
 
 import (
-	"academy_bootcamp/infrastructure/datastore"
-	"academy_bootcamp/interface/controller"
+	"github.com/FernandoGal25/academy-go-q42021/infrastructure/datastore"
+	"github.com/FernandoGal25/academy-go-q42021/interface/controller"
 )
 
 type registry struct {
 	csv *datastore.CSVHandler
-	// api
 }
 
+/*
+	Dependency inyector.
+*/
 type Registry interface {
 	Register() controller.AppController
 }
 
-func NewRegistry(csv *datastore.CSVHandler) Registry {
-	return &registry{csv}
+/*
+	Creates new registry.
+*/
+func NewRegistry(csv *datastore.CSVHandler) registry {
+	return registry{csv}
 }
 
-func (r *registry) Register() controller.AppController {
+/*
+	Initializes the dependency inyection.
+*/
+func (r registry) Register() controller.AppController {
 	return controller.AppController{
-		Item: r.NewItemController(),
+		Pokemon: r.NewPokemonController(),
 	}
 }

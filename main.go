@@ -1,29 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/labstack/echo"
-
-	"academy_bootcamp/config"
-	"academy_bootcamp/config/registry"
-	"academy_bootcamp/infrastructure/datastore"
-	"academy_bootcamp/infrastructure/router"
+	"github.com/FernandoGal25/academy-go-q42021/config"
+	"github.com/FernandoGal25/academy-go-q42021/config/registry"
+	"github.com/FernandoGal25/academy-go-q42021/infrastructure/datastore"
+	"github.com/FernandoGal25/academy-go-q42021/infrastructure/router"
 )
 
 func main() {
-	config.ReadConfig()
+	c, err := config.ReadConfig()
 
-	h := datastore.NewCSVHandler(config.C.CSV.Path)
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
 
+	h := datastore.NewCSVHandler(c.CSV.Path)
 	r := registry.NewRegistry(h)
+	e := router.NewRouter(r.Register())
 
-	e := echo.New()
-	e = router.NewRouter(e, r.Register())
-
-	fmt.Println("Server listen at http://localhost" + ":" + config.C.Server.Port)
-	if err := e.Start(":" + config.C.Server.Port); err != nil {
+	if err := e.Start(":" + c.Server.Port); err != nil {
 		log.Fatalln(err)
 	}
 }

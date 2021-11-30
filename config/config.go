@@ -1,17 +1,16 @@
 package config
 
 import (
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/davecgh/go-spew/spew"
 
 	"github.com/spf13/viper"
 )
 
 type config struct {
+	Rest struct {
+		Api string
+	}
 	CSV struct {
 		Path string
 	}
@@ -20,9 +19,11 @@ type config struct {
 	}
 }
 
-var C config
-
-func ReadConfig() {
+/*
+	Extracts the config variables.
+*/
+func ReadConfig() (*config, error) {
+	var C config
 	Config := &C
 
 	viper.SetConfigName("config")
@@ -32,14 +33,12 @@ func ReadConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println(err)
-		log.Fatalln(err)
+		return nil, err
 	}
 
 	if err := viper.Unmarshal(&Config); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	spew.Dump(C)
+	return Config, nil
 }

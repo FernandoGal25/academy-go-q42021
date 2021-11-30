@@ -1,18 +1,22 @@
 package router
 
 import (
-	"academy_bootcamp/interface/controller"
+	"github.com/FernandoGal25/academy-go-q42021/interface/controller"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
-func NewRouter(e *echo.Echo, c controller.AppController) *echo.Echo {
+/*
+	Initializes the endpoints of the pokemon API
+*/
+func NewRouter(c controller.AppController) *echo.Echo {
+	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/items/:id", func(context echo.Context) error { return c.Item.GetItemById(context) })
-	// e.POST("/items", func(context echo.Context) error { return c.Item.CreateItem(context) })
+	e.GET("/pokemons/:ID", func(context echo.Context) error { return c.Pokemon.ActionGetByID(context) })
+	e.GET("/pokemons", func(context echo.Context) error { return c.Pokemon.ActionGetAll(context) })
 
 	return e
 }

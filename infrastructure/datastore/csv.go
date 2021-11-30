@@ -6,34 +6,68 @@ import (
 	"os"
 )
 
+/*
+	Wrapper of the CSV file, combines the management
+	of the os and enconding/csv libraries.
+*/
 type CSVHandler struct {
-	Path   string
-	File   *os.File
-	Writer *csv.Writer
-	Reader *csv.Reader
+	path   string
+	schema []string
+	file   *os.File
+	writer *csv.Writer
+	reader *csv.Reader
 }
 
+/*
+	Returns an instance of the CSVHandler
+*/
 func NewCSVHandler(filePath string) *CSVHandler {
-	return &CSVHandler{Path: filePath}
+	return &CSVHandler{path: filePath}
 }
 
+/*
+	Method used to assign the handler with the required
+	tools to manage the csv file, is separated of the
+	initialization of the handler in order to avoid leaving
+	the CSV file opened in case something fails.
+*/
 func (h *CSVHandler) BuildHandler() error {
-	f, err := os.Open(h.Path)
+	f, err := os.Open(h.path)
+
 	if err != nil {
-		return errors.New("no se pudo abrir el archivo")
+		return errors.New("CANNOT OPEN CSV FILE")
 	}
 
-	h.File = f
-	h.Reader = csv.NewReader(f)
-	h.Writer = csv.NewWriter(f)
+	h.file = f
+	h.reader = csv.NewReader(f)
+	h.writer = csv.NewWriter(f)
+	header, err := h.Read()
+	if err != nil {
+		return errors.New("CANNOT READ CSV FILE")
+	}
 
+	h.schema = header
 	return nil
 }
 
+/*
+	Method that reads one line of the CSV file.
+*/
 func (h *CSVHandler) Read() ([]string, error) {
-	return h.Reader.Read()
+	return h.reader.Read()
 }
 
-func (h *CSVHandler) Write() ([]string, error) {
-	return h.Reader.Read()
+/*
+	Method that reads all the lines of the CSV file.
+*/
+func (h *CSVHandler) ReadAll() ([][]string, error) {
+	return h.reader.ReadAll()
+}
+
+/*
+	Method that wraps the os.File method Close,
+	closes the stream of the opened CSV file.
+*/
+func (h *CSVHandler) Close() error {
+	return h.file.Close()
 }

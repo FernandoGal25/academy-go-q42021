@@ -1,0 +1,4 @@
+id,name,height,weight,order,base_experience
+1,bulbasaur,7,69,1,64
+2,ivysaur,10,130,2,142
+3,venusaur,20,1000,3,236

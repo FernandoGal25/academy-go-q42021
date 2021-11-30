@@ -1,20 +1,28 @@
 package registry
 
 import (
-	"academy_bootcamp/application/contracts"
-	"academy_bootcamp/application/usecase"
-	"academy_bootcamp/interface/controller"
-	"academy_bootcamp/interface/repository"
+	"github.com/FernandoGal25/academy-go-q42021/application/usecase"
+	"github.com/FernandoGal25/academy-go-q42021/interface/controller"
+	"github.com/FernandoGal25/academy-go-q42021/interface/repository"
 )
 
-func (r *registry) NewItemController() controller.ItemController {
-	return controller.NewItemController(r.NewItemService())
+/*
+	Instances pokemon controller by inyecting pokemon use case.
+*/
+func (r registry) NewPokemonController() controller.PokemonController {
+	return controller.NewPokemonController(r.NewPokemonService())
 }
 
-func (r *registry) NewItemService() usecase.ItemService {
-	return usecase.NewItemService(r.NewItemRepository())
+/*
+	Instances pokemon use case by inyecting pokemon repository.
+*/
+func (r registry) NewPokemonService() usecase.PokemonService {
+	return usecase.NewPokemonService(r.NewPokemonRepository())
 }
 
-func (r *registry) NewItemRepository() contracts.ItemRepository {
-	return repository.NewItemRepository(r.csv)
+/*
+	Instances pokemon repository by inyecting CSV file handler.
+*/
+func (r registry) NewPokemonRepository() repository.CSVPokemonRepository {
+	return repository.NewCSVPokemonRepository(r.csv)
 }
