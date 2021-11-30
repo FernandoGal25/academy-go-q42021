@@ -11,11 +11,12 @@ import (
 	of the os and enconding/csv libraries.
 */
 type CSVHandler struct {
-	path   string
-	schema []string
-	file   *os.File
-	writer *csv.Writer
-	reader *csv.Reader
+	path      string
+	schema    []string
+	readFile  *os.File
+	writeFile *os.File
+	writer    *csv.Writer
+	reader    *csv.Reader
 }
 
 /*
@@ -32,15 +33,23 @@ func NewCSVHandler(filePath string) *CSVHandler {
 	the CSV file opened in case something fails.
 */
 func (h *CSVHandler) BuildHandler() error {
-	f, err := os.Open(h.path)
+	wf, err := os.OpenFile(h.path, os.O_WRONLY|os.O_APPEND, 0666)
 
 	if err != nil {
 		return errors.New("CANNOT OPEN CSV FILE")
 	}
 
-	h.file = f
-	h.reader = csv.NewReader(f)
-	h.writer = csv.NewWriter(f)
+	rf, err := os.Open(h.path)
+
+	if err != nil {
+		return errors.New("CANNOT OPEN CSV FILE")
+	}
+
+	h.readFile = rf
+	h.writeFile = wf
+	h.reader = csv.NewReader(rf)
+	h.writer = csv.NewWriter(wf)
+
 	header, err := h.Read()
 	if err != nil {
 		return errors.New("CANNOT READ CSV FILE")
@@ -64,10 +73,23 @@ func (h *CSVHandler) ReadAll() ([][]string, error) {
 	return h.reader.ReadAll()
 }
 
+func (h *CSVHandler) Write(r []string) error {
+	return h.writer.Write(r)
+}
+
 /*
 	Method that wraps the os.File method Close,
 	closes the stream of the opened CSV file.
 */
 func (h *CSVHandler) Close() error {
-	return h.file.Close()
+	err := h.writeFile.Close()
+	if err != nil {
+		return err
+	}
+	return h.readFile.Close()
+}
+
+// Shortcut to writer flush
+func (h *CSVHandler) Flush() {
+	defer h.writer.Flush()
 }

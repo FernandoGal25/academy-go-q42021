@@ -18,7 +18,7 @@ func main() {
 	}
 
 	h := datastore.NewCSVHandler(c.CSV.Path)
-	r := registry.NewRegistry(h)
+	r := registry.NewRegistry(h, c.Rest.Api)
 	e := router.NewRouter(r.Register())
 
 	if err := e.Start(":" + c.Server.Port); err != nil {

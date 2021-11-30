@@ -20,7 +20,7 @@ func TestPokemonService_GetAllPokemons_Correct(t *testing.T) {
 		ID:   249,
 		Name: "Lugia",
 	}}, nil)
-	service := PokemonService{PokemonRepository: repo}
+	service := PokemonService{CSVPokemonRepository: repo}
 	p, _ := service.GetAllPokemons()
 	if p == nil {
 		t.Errorf("Pokemons not matching")
@@ -36,7 +36,7 @@ func TestPokemonService_GetPokemonByID_Correct(t *testing.T) {
 		ID:   25,
 		Name: "Pikachu",
 	}, nil)
-	service := PokemonService{PokemonRepository: repo}
+	service := PokemonService{CSVPokemonRepository: repo}
 	p, _ := service.GetPokemonByID(key)
 	if p == nil {
 		t.Errorf("Pokemons not matching")

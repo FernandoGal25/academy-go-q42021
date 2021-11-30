@@ -49,3 +49,20 @@ func (ic PokemonController) ActionGetAll(c Context) error {
 
 	return responseJSON(c, result, http.StatusOK)
 }
+
+/*
+	Calls CreatePokemon usecase.
+*/
+func (ic PokemonController) ActionPostByID(c Context) error {
+	key, err := parseIDParam(c)
+	if err != nil {
+		return responseErrorJSON(c, err)
+	}
+
+	result, err := ic.Usecase.CreatePokemon(key)
+	if err != nil {
+		return responseErrorJSON(c, err)
+	}
+
+	return responseJSON(c, result, http.StatusOK)
+}

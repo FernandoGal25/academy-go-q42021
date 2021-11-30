@@ -55,6 +55,17 @@ func buildPokemon(p *model.Pokemon, data []string, ID uint64) error {
 	return nil
 }
 
+func unBuildPokemon(p *model.Pokemon) []string {
+	return []string{
+		strconv.FormatUint(p.ID, 10),
+		p.Name,
+		strconv.Itoa(p.Height),
+		strconv.Itoa(p.Weight),
+		strconv.Itoa(p.Order),
+		strconv.Itoa(p.BaseExperience),
+	}
+}
+
 /*
 	Searches the pokemon which ID belongs to.
 */
@@ -98,12 +109,10 @@ func (r CSVPokemonRepository) FindByID(ID uint64) (*model.Pokemon, error) {
 	Returns all pokemon registered in the CSV file.
 */
 func (r CSVPokemonRepository) FetchAll() ([]model.Pokemon, error) {
-	err := r.Handler.BuildHandler()
-
-	if err != nil {
+	if err := r.Handler.BuildHandler(); err != nil {
 		return nil, err
 	}
-
+	defer r.Handler.Close()
 	var collection = []model.Pokemon{}
 
 	records, err := r.Handler.ReadAll()
@@ -126,4 +135,14 @@ func (r CSVPokemonRepository) FetchAll() ([]model.Pokemon, error) {
 	}
 
 	return collection, nil
+}
+
+func (r CSVPokemonRepository) Persist(p *model.Pokemon) error {
+	if err := r.Handler.BuildHandler(); err != nil {
+		return err
+	}
+	defer r.Handler.Close()
+	defer r.Handler.Flush()
+
+	return r.Handler.Write(unBuildPokemon(p))
 }

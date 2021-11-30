@@ -2,3 +2,7 @@ id,name,height,weight,order,base_experience
 1,bulbasaur,7,69,1,64
 2,ivysaur,10,130,2,142
 3,venusaur,20,1000,3,236
+4,charmander,6,85,5,62
+5,charmeleon,11,190,6,142
+6,charizard,17,905,7,240
+7,squirtle,5,90,10,63

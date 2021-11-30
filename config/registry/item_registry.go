@@ -17,12 +17,16 @@ func (r registry) NewPokemonController() controller.PokemonController {
 	Instances pokemon use case by inyecting pokemon repository.
 */
 func (r registry) NewPokemonService() usecase.PokemonService {
-	return usecase.NewPokemonService(r.NewPokemonRepository())
+	return usecase.NewPokemonService(r.NewCSVPokemonRepository(), r.NewRESTPokemonRepository())
 }
 
 /*
 	Instances pokemon repository by inyecting CSV file handler.
 */
-func (r registry) NewPokemonRepository() repository.CSVPokemonRepository {
+func (r registry) NewCSVPokemonRepository() repository.CSVPokemonRepository {
 	return repository.NewCSVPokemonRepository(r.csv)
+}
+
+func (r registry) NewRESTPokemonRepository() repository.RESTPokemonRepository {
+	return repository.NewRestPokemonRepository(r.api)
 }
