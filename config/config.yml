@@ -1,8 +1,0 @@
-rest:
-  api: "https://pokeapi.co/api/v2"
-
-csv:
-  path: "public/csv/pokemon.csv"
-
-server:
-  port: 8080

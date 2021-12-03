@@ -4,10 +4,11 @@ import (
 	"os"
 	"path/filepath"
 
+	errors "github.com/FernandoGal25/academy-go-q42021/error"
 	"github.com/spf13/viper"
 )
 
-type config struct {
+type Config struct {
 	Rest struct {
 		Api string
 	}
@@ -19,26 +20,28 @@ type config struct {
 	}
 }
 
-/*
-	Extracts the config variables.
-*/
-func ReadConfig() (*config, error) {
-	var C config
-	Config := &C
+// Extracts the config variables.
+func ReadConfig() (*Config, error) {
+	var c Config
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
-	path, _ := os.Getwd()
+	path, err := os.Getwd()
+
+	if err != nil {
+		return nil, errors.ErrSystemConfig{Message: "Could not find directory path", Err: err}
+	}
+
 	viper.AddConfigPath(filepath.Join(path, "config"))
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, err
+		return nil, errors.ErrSystemConfig{Message: "Could not load configuration", Err: err}
 	}
 
-	if err := viper.Unmarshal(&Config); err != nil {
-		return nil, err
+	if err := viper.Unmarshal(&c); err != nil {
+		return nil, errors.ErrSystemConfig{Message: "Failed to parse configuration", Err: err}
 	}
 
-	return Config, nil
+	return &c, nil
 }
