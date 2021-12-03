@@ -6,3 +6,5 @@ id,name,height,weight,order,base_experience
 5,charmeleon,11,190,6,142
 6,charizard,17,905,7,240
 7,squirtle,5,90,10,63
+8,wartortle,10,225,11,0
+9,blastoise,16,855,12,0

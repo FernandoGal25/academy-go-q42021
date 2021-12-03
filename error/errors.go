@@ -9,6 +9,12 @@ type ErrCSVFormat struct {
 	Err     error
 }
 
+// Custom error made for wrapping HTTP request errors.
+type ErrHTTPRequest struct {
+	Message string
+	Err     error
+}
+
 // Custom error made in case the searched item is not found.
 type ErrEntityNotFound struct {
 	Message string
@@ -52,6 +58,16 @@ func (err ErrCSVFormat) Error() string {
 
 // Returns original error.
 func (err ErrCSVFormat) Unwrap() error {
+	return err.Err
+}
+
+// Returns custom message.
+func (err ErrHTTPRequest) Error() string {
+	return err.Message
+}
+
+// Returns original error.
+func (err ErrHTTPRequest) Unwrap() error {
 	return err.Err
 }
 
