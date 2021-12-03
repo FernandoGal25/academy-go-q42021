@@ -14,7 +14,7 @@ git clone https://github.com/FernandoGal25/academy-go-q42021
 
 - `Go` installed in your machine.
 
-- Rename `config.yml.dist` to `config.yml` in `config` directory and replace `zero values` with the required values.
+- Rename `config.yml.dist` to `config.yml` in `config` directory and replace `default values` with the required values.
 
 ## Running the project
 
