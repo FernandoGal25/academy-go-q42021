@@ -1,78 +1,132 @@
 package errors
 
-/*
-	Custom message made in case of undefined error.
-*/
-const DEFAULT_MESSAGE = "SOMETHING WENT TERRIBLY WRONG"
+// Custom message made in case of undefined error.
+const DefaultMessage = "Something went terribly wrong."
 
-/*
-	Custom error made for wrapping CSV handling errors.
-*/
-type CSVFormatError struct {
+// Custom error made for wrapping CSV handling errors.
+type ErrCSVFormat struct {
 	Message string
 	Err     error
 }
 
-/*
-	Custom error made in case the searched item is not found.
-*/
-type EntityNotFoundError struct {
+// Custom error made for wrapping HTTP request errors.
+type ErrHTTPRequest struct {
 	Message string
 	Err     error
 }
 
-/*
-	Custom error that wraps the errors made on request.
-*/
-type InvalidRequestError struct {
+// Custom error made in case the searched item is not found.
+type ErrEntityNotFound struct {
 	Message string
 	Err     error
 }
 
-/*
-	Custom error made in case any business rule is not met.
-*/
-type DomainValidationError struct {
+// Custom error that wraps the errors made on request.
+type ErrInvalidRequest struct {
+	Message string
+	Err     error
+}
+
+// Custom error made in case any business rule is not met.
+type ErrDomainValidation struct {
+	Message string
+	Err     error
+}
+
+// Custom error meant to be a wraper of an error from a repository.
+type ErrRepositoryWrapper struct {
+	Message string
+	Err     error
+}
+
+// Custom error meant to be a wraper of an error from a infrastructure datastore.
+type ErrDatastoreWrapper struct {
+	Message string
+	Err     error
+}
+
+// Custom error made to wrap system config errors.
+type ErrSystemConfig struct {
 	Message string
 	Err     error
 }
 
 // Returns custom message.
-func (err CSVFormatError) Error() string {
+func (err ErrCSVFormat) Error() string {
 	return err.Message
 }
 
 // Returns original error.
-func (err CSVFormatError) Unwrap() error {
+func (err ErrCSVFormat) Unwrap() error {
 	return err.Err
 }
 
 // Returns custom message.
-func (err EntityNotFoundError) Error() string {
+func (err ErrHTTPRequest) Error() string {
 	return err.Message
 }
 
 // Returns original error.
-func (err EntityNotFoundError) Unwrap() error {
+func (err ErrHTTPRequest) Unwrap() error {
 	return err.Err
 }
 
 // Returns custom message.
-func (err InvalidRequestError) Error() string {
+func (err ErrEntityNotFound) Error() string {
 	return err.Message
 }
 
 // Returns original error.
-func (err InvalidRequestError) Unwrap() error {
+func (err ErrEntityNotFound) Unwrap() error {
 	return err.Err
 }
 
 // Returns custom message.
-func (err DomainValidationError) Error() string {
+func (err ErrInvalidRequest) Error() string {
 	return err.Message
 }
 
 // Returns original error.
-func (err DomainValidationError) Unwrap() error {
+func (err ErrInvalidRequest) Unwrap() error {
+	return err.Err
+}
+
+// Returns custom message.
+func (err ErrDomainValidation) Error() string {
+	return err.Message
+}
+
+// Returns original error.
+func (err ErrDomainValidation) Unwrap() error {
+	return err.Err
+}
+
+// Returns custom message.
+func (err ErrRepositoryWrapper) Error() string {
+	return err.Message
+}
+
+// Returns original error.
+func (err ErrRepositoryWrapper) Unwrap() error {
+	return err.Err
+}
+
+// Returns custom message.
+func (err ErrDatastoreWrapper) Error() string {
+	return err.Message
+}
+
+// Returns original error.
+func (err ErrDatastoreWrapper) Unwrap() error {
+	return err.Err
+}
+
+// Returns custom message.
+func (err ErrSystemConfig) Error() string {
+	return err.Message
+}
+
+// Returns original error.
+func (err ErrSystemConfig) Unwrap() error {
 	return err.Err
 }

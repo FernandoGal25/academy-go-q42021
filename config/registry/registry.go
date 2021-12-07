@@ -7,6 +7,7 @@ import (
 
 type registry struct {
 	csv *datastore.CSVHandler
+	api string
 }
 
 /*
@@ -19,8 +20,8 @@ type Registry interface {
 /*
 	Creates new registry.
 */
-func NewRegistry(csv *datastore.CSVHandler) registry {
-	return registry{csv}
+func NewRegistry(csv *datastore.CSVHandler, api string) registry {
+	return registry{csv, api}
 }
 
 /*
