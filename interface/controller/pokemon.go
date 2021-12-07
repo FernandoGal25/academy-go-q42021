@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/FernandoGal25/academy-go-q42021/application/usecase"
@@ -62,10 +63,8 @@ func (ic PokemonController) ActionPostByID(c Context) error {
 	)
 }
 
-func adaptFilters(c Context) (map[string]interface{}, error) {
+func adaptFilters(qp url.Values) (map[string]interface{}, error) {
 	filters := make(map[string]interface{})
-
-	qp := c.QueryParams()
 
 	if qp["type"][0] == "odd" {
 		filters["id"] = func(id int) bool {
@@ -109,7 +108,7 @@ func adaptFilters(c Context) (map[string]interface{}, error) {
 
 // ActionGetByFilters calls GetPokemonsByFilters.
 func (ic PokemonController) ActionGetByFilters(c Context) error {
-	filters, err := adaptFilters(c)
+	filters, err := adaptFilters(c.QueryParams())
 
 	if err != nil {
 		return responseErrorJSON(c, err)

@@ -7,7 +7,6 @@ import "net/url"
 // implementation while mantaining the same code structure.
 type Context interface {
 	JSON(code int, i interface{}) error
-	Bind(i interface{}) error
 	Param(name string) string
 	QueryParams() url.Values
 }

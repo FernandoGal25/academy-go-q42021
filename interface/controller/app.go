@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -31,7 +30,6 @@ func parseIDParam(c Context) (int, error) {
 
 func responseJSON(c Context, result interface{}, code int) error {
 	if err := c.JSON(code, result); err != nil {
-		log.Fatalln(err)
 		return err
 	}
 
