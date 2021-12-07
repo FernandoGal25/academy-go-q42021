@@ -2,7 +2,7 @@ package helpers
 
 import "strings"
 
-// Transform snake to camel case, function copied from
+// SnakeCaseToCamelCase transform snake to camel case, function copied from
 // https://www.socketloop.com/tutorials/golang-underscore-or-snake-case-to-camel-case-example
 func SnakeCaseToCamelCase(snake string) (camel string) {
 

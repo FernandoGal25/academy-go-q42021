@@ -254,3 +254,111 @@ func TestPokemonService_CreatePokemon(t *testing.T) {
 		assert.Equal(t, tt.wantResult, result, "%v , expected: %v, got: %v", tt.name, tt.wantResult, result)
 	}
 }
+
+func TestPokemonService_GetPokemonsByFilters(t *testing.T) {
+	filters := map[string]interface{}{
+		"id": func(id int) bool {
+			return id%2 == 1
+		},
+		"limit":      4,
+		"workerJobs": 2,
+	}
+	tests := []struct {
+		name       string
+		filters    map[string]interface{}
+		prepare    func(repo *repository.MockPokemonRepository)
+		wantResult []model.Pokemon
+		wantErr    error
+	}{
+		{
+			name:    "Correct test",
+			filters: filters,
+			prepare: func(repo *repository.MockPokemonRepository) {
+				repo.EXPECT().FetchConcurrently(filters).Return([]model.Pokemon{{
+					ID:             1,
+					Name:           "bulbasaur",
+					Height:         7,
+					Weight:         69,
+					Order:          1,
+					BaseExperience: 64,
+				}, {
+					ID:             3,
+					Name:           "venusaur",
+					Height:         6,
+					Weight:         85,
+					Order:          5,
+					BaseExperience: 62,
+				}, {
+					ID:             5,
+					Name:           "charmeleon",
+					Height:         11,
+					Weight:         190,
+					Order:          6,
+					BaseExperience: 142,
+				}, {
+					ID:             7,
+					Name:           "squirtle",
+					Height:         17,
+					Weight:         905,
+					Order:          7,
+					BaseExperience: 240,
+				}}, nil)
+			},
+			wantResult: []model.Pokemon{{
+				ID:             1,
+				Name:           "bulbasaur",
+				Height:         7,
+				Weight:         69,
+				Order:          1,
+				BaseExperience: 64,
+			}, {
+				ID:             3,
+				Name:           "venusaur",
+				Height:         6,
+				Weight:         85,
+				Order:          5,
+				BaseExperience: 62,
+			}, {
+				ID:             5,
+				Name:           "charmeleon",
+				Height:         11,
+				Weight:         190,
+				Order:          6,
+				BaseExperience: 142,
+			}, {
+				ID:             7,
+				Name:           "squirtle",
+				Height:         17,
+				Weight:         905,
+				Order:          7,
+				BaseExperience: 240,
+			}},
+			wantErr: nil,
+		},
+		{
+			name:    "Repository error test",
+			filters: filters,
+			prepare: func(repo *repository.MockPokemonRepository) {
+				repo.EXPECT().FetchConcurrently(filters).Return(nil, assert.AnError)
+			},
+			wantResult: nil,
+			wantErr:    customErrors.ErrRepositoryWrapper{Message: "Failed to get pokemons with filters from repository", Err: assert.AnError},
+		},
+	}
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	repo := repository.NewMockPokemonRepository(mockCtrl)
+	service := PokemonService{CSVPokemonRepository: repo}
+	for _, tt := range tests {
+
+		if tt.prepare != nil {
+			tt.prepare(repo)
+		}
+
+		result, err := service.GetPokemonsByFilters(tt.filters)
+		assert.Equal(t, tt.wantErr, err, "%v , expected: %v, got: %v", tt.name, tt.wantErr, err)
+		assert.Equal(t, tt.wantResult, result, "%v , expected: %v, got: %v", tt.name, tt.wantResult, result)
+	}
+}

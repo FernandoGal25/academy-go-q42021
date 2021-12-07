@@ -10,23 +10,17 @@ type registry struct {
 	api string
 }
 
-/*
-	Dependency inyector.
-*/
+// Registry is the dependency inyector.
 type Registry interface {
 	Register() controller.AppController
 }
 
-/*
-	Creates new registry.
-*/
+// NewRegistry creates new registry.
 func NewRegistry(csv *datastore.CSVHandler, api string) registry {
 	return registry{csv, api}
 }
 
-/*
-	Initializes the dependency inyection.
-*/
+// Register initializes the dependency inyection.
 func (r registry) Register() controller.AppController {
 	return controller.AppController{
 		Pokemon: r.NewPokemonController(),

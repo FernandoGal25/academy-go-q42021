@@ -68,3 +68,7 @@ func (r RESTPokemonRepository) FetchAll() ([]model.Pokemon, error) {
 func (r RESTPokemonRepository) Persist(*model.Pokemon) error {
 	return errors.New("method Persist from RestPokemonRepository stil under construction")
 }
+
+func (r RESTPokemonRepository) FetchConcurrently(f map[string]interface{}) ([]model.Pokemon, error) {
+	return nil, errors.New("method Persist from RestPokemonRepository stil under construction")
+}

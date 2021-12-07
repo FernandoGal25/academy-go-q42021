@@ -10,13 +10,21 @@ import (
 
 const totalPokemon = 898
 
-// Service that handles the pokemon case uses.
+// PokemonUsecase is an interface that defines the pokemon uses cases.
+type PokemonUsecase interface {
+	GetPokemonByID(key int) (*model.Pokemon, error)
+	GetAllPokemons() ([]model.Pokemon, error)
+	CreatePokemon(key int) (string, error)
+	GetPokemonsByFilters(f map[string]interface{}) ([]model.Pokemon, error)
+}
+
+// PokemonService is a service that handles the pokemon case uses.
 type PokemonService struct {
 	CSVPokemonRepository  contracts.PokemonRepository
 	RestPokemonRepository contracts.PokemonRepository
 }
 
-// Returns an instance of PokemonService.
+// NewPokemonService returns an instance of PokemonService.
 func NewPokemonService(r1 contracts.PokemonRepository, r2 contracts.PokemonRepository) PokemonService {
 	return PokemonService{r1, r2}
 }
@@ -35,7 +43,7 @@ func validateRangeID(key int) error {
 	return nil
 }
 
-// Orchestrates the tools required to retrieve a pokemon by ID.
+// GetPokemonByID orchestrates the tools required to retrieve a pokemon by ID.
 func (s PokemonService) GetPokemonByID(key int) (*model.Pokemon, error) {
 	if err := validateRangeID(key); err != nil {
 		return nil, err
@@ -50,7 +58,7 @@ func (s PokemonService) GetPokemonByID(key int) (*model.Pokemon, error) {
 	return p, nil
 }
 
-// Orchestrates the tools required to retrieve all pokemon.
+// GetAllPokemons orchestrates the tools required to retrieve all pokemon.
 func (s PokemonService) GetAllPokemons() ([]model.Pokemon, error) {
 	p, err := s.CSVPokemonRepository.FetchAll()
 
@@ -61,7 +69,7 @@ func (s PokemonService) GetAllPokemons() ([]model.Pokemon, error) {
 	return p, nil
 }
 
-// Orchestrates the tools required to register a new pokemon from
+// CreatePokemon orchestrates the tools required to register a new pokemon from
 // an external API.
 func (s PokemonService) CreatePokemon(key int) (string, error) {
 	if err := validateRangeID(key); err != nil {
@@ -79,4 +87,16 @@ func (s PokemonService) CreatePokemon(key int) (string, error) {
 	}
 
 	return p.Name, nil
+}
+
+// GetPokemonsByFilters orchestrates the elements required to
+// get pokemon using certain filters.
+func (s PokemonService) GetPokemonsByFilters(f map[string]interface{}) ([]model.Pokemon, error) {
+	p, err := s.CSVPokemonRepository.FetchConcurrently(f)
+
+	if err != nil {
+		return nil, errors.ErrRepositoryWrapper{Message: "Failed to get pokemons with filters from repository", Err: err}
+	}
+
+	return p, nil
 }

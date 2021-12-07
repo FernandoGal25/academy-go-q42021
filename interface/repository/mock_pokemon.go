@@ -49,6 +49,21 @@ func (mr *MockPokemonRepositoryMockRecorder) FetchAll() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchAll", reflect.TypeOf((*MockPokemonRepository)(nil).FetchAll))
 }
 
+// FetchConcurrently mocks base method.
+func (m *MockPokemonRepository) FetchConcurrently(f map[string]interface{}) ([]model.Pokemon, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchConcurrently", f)
+	ret0, _ := ret[0].([]model.Pokemon)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchConcurrently indicates an expected call of FetchConcurrently.
+func (mr *MockPokemonRepositoryMockRecorder) FetchConcurrently(f interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchConcurrently", reflect.TypeOf((*MockPokemonRepository)(nil).FetchConcurrently), f)
+}
+
 // FindByID mocks base method.
 func (m *MockPokemonRepository) FindByID(id int) (*model.Pokemon, error) {
 	m.ctrl.T.Helper()

@@ -42,31 +42,25 @@ func responseErrorJSON(c Context, err error) error {
 	var status int
 	var r []ErrorResponse
 
-Done:
+BuildResponse:
 	for {
 		switch err.(type) {
 		case nil:
-			break Done
+			break BuildResponse
 		case customErrors.ErrInvalidRequest:
-			r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
-			err = errors.Unwrap(err)
 			status = http.StatusBadRequest
 		case customErrors.ErrDomainValidation:
-			r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
-			err = errors.Unwrap(err)
 			status = http.StatusBadRequest
 		case customErrors.ErrEntityNotFound:
-			r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
-			err = errors.Unwrap(err)
 			status = http.StatusNotFound
 		case customErrors.ErrCSVFormat:
-			r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
-			err = errors.Unwrap(err)
 			status = http.StatusInternalServerError
-		default:
-			r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
-			err = errors.Unwrap(err)
+		case customErrors.ErrHTTPRequest:
+			status = http.StatusInternalServerError
 		}
+
+		r = append(r, ErrorResponse{Message: err.Error(), ErrorType: reflect.TypeOf(err).String()})
+		err = errors.Unwrap(err)
 	}
 
 	if status == 0 {

@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-// Initializes the endpoints of the pokemon API.
+// NewRouter initializes the endpoints of the pokemon API.
 func NewRouter(c controller.AppController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -16,6 +16,7 @@ func NewRouter(c controller.AppController) *echo.Echo {
 	e.GET("/pokemons/:id", func(context echo.Context) error { return c.Pokemon.ActionGetByID(context) })
 	e.GET("/pokemons", func(context echo.Context) error { return c.Pokemon.ActionGetAll(context) })
 	e.POST("/pokemons/:id", func(context echo.Context) error { return c.Pokemon.ActionPostByID(context) })
+	e.GET("/pokemons/concurrent", func(context echo.Context) error { return c.Pokemon.ActionGetByFilters(context) })
 
 	return e
 }

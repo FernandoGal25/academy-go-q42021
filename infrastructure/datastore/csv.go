@@ -8,8 +8,8 @@ import (
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
 )
 
-// Wrapper of the CSV file, combines the management of the
-// os and enconding/csv libraries.
+// CSVHandler is a wrapper of the CSV file, combines the management of the
+// os and enconding/csv libraries, reads and write from existing CSV files.
 type CSVHandler struct {
 	path      string
 	Schema    []string
@@ -19,12 +19,12 @@ type CSVHandler struct {
 	reader    *csv.Reader
 }
 
-// Returns an instance of the CSVHandler
+// NewCSVHandler returns an instance of the CSVHandler
 func NewCSVHandler(filePath string) *CSVHandler {
 	return &CSVHandler{path: filePath}
 }
 
-// Method used to assign the handler with the required tools to manage
+// BuildHandler is a method used to assign the handler with the required tools to manage
 // the csv file, is separated of the initialization of the handler in
 // order to avoid leaving the CSV file opened in case something fails.
 
@@ -56,7 +56,7 @@ func (h *CSVHandler) BuildHandler() error {
 	return nil
 }
 
-// Method that reads one line of the CSV file.
+// Read is a method that reads one line of the CSV file.
 func (h *CSVHandler) Read() ([]string, error) {
 	record, err := h.reader.Read()
 	if err != nil {
@@ -66,7 +66,7 @@ func (h *CSVHandler) Read() ([]string, error) {
 	return record, nil
 }
 
-// Method that reads all the lines of the CSV file.
+// ReadAll is a method that reads all the lines of the CSV file.
 func (h *CSVHandler) ReadAll() ([][]string, error) {
 	records, err := h.reader.ReadAll()
 	if err != nil {
@@ -76,7 +76,7 @@ func (h *CSVHandler) ReadAll() ([][]string, error) {
 	return records, nil
 }
 
-// Method that writes one row of the csv.
+// Write is a method that writes one row of the csv.
 func (h *CSVHandler) Write(r []string) error {
 	if err := h.writer.Write(r); err != nil {
 		return customErrors.ErrCSVFormat{Message: "Cannot write in CSV", Err: err}
@@ -85,7 +85,7 @@ func (h *CSVHandler) Write(r []string) error {
 	return nil
 }
 
-// Method that wraps the os.File method Close, closes the stream
+// Close is a method that wraps the os.File method Close, closes the stream
 // of the opened CSV file and flushes the write stream in order to
 // persist the changes.
 func (h *CSVHandler) Close() {
