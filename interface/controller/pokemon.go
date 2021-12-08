@@ -9,6 +9,13 @@ import (
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
 )
 
+type PokemonAction interface {
+	ActionGetByID(c Context) error
+	ActionGetAll(c Context) error
+	ActionPostByID(c Context) error
+	ActionGetByFilters(c Context) error
+}
+
 // PokemonController handles the request and response of the pokemon endpoints
 type PokemonController struct {
 	Usecase usecase.PokemonUsecase

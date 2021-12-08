@@ -1,4 +1,4 @@
-package controller
+package controller_test
 
 import (
 	"strconv"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/FernandoGal25/academy-go-q42021/domain/model"
 	"github.com/FernandoGal25/academy-go-q42021/infrastructure/mock"
+	"github.com/FernandoGal25/academy-go-q42021/interface/controller"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -70,7 +71,7 @@ func TestPokemonController_ActionGetAll(t *testing.T) {
 			name: "Usecase error",
 			prepare: func(usecase *mock.MockPokemonUsecase, context *mock.MockContext) {
 				usecase.EXPECT().GetAllPokemons().Return(nil, assert.AnError)
-				context.EXPECT().JSON(500, map[string][]ErrorResponse{"errors": {
+				context.EXPECT().JSON(500, map[string][]controller.ErrorResponse{"errors": {
 					{Message: assert.AnError.Error(), ErrorType: "*errors.errorString"},
 				}}).Return(assert.AnError)
 			},
@@ -82,7 +83,7 @@ func TestPokemonController_ActionGetAll(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	usecase := mock.NewMockPokemonUsecase(mockCtrl)
-	ctrl := NewPokemonController(usecase)
+	ctrl := controller.NewPokemonController(usecase)
 
 	for _, tt := range tests {
 		context := mock.NewMockContext(mockCtrl)
@@ -128,7 +129,7 @@ func TestPokemonController_ActionGetByID(t *testing.T) {
 			prepare: func(usecase *mock.MockPokemonUsecase, context *mock.MockContext) {
 				_, err := strconv.Atoi("a")
 				context.EXPECT().Param("id").Return("a")
-				context.EXPECT().JSON(400, map[string][]ErrorResponse{"errors": {
+				context.EXPECT().JSON(400, map[string][]controller.ErrorResponse{"errors": {
 					{Message: "Invalid ID param, must be a number", ErrorType: "errors.ErrInvalidRequest"},
 					{Message: err.Error(), ErrorType: "*strconv.NumError"},
 					{Message: "invalid syntax", ErrorType: "*errors.errorString"},
@@ -141,7 +142,7 @@ func TestPokemonController_ActionGetByID(t *testing.T) {
 			prepare: func(usecase *mock.MockPokemonUsecase, context *mock.MockContext) {
 				usecase.EXPECT().GetPokemonByID(1).Return(nil, assert.AnError)
 				context.EXPECT().Param("id").Return("1")
-				context.EXPECT().JSON(500, map[string][]ErrorResponse{"errors": {
+				context.EXPECT().JSON(500, map[string][]controller.ErrorResponse{"errors": {
 					{Message: assert.AnError.Error(), ErrorType: "*errors.errorString"},
 				}}).Return(assert.AnError)
 			},
@@ -152,7 +153,7 @@ func TestPokemonController_ActionGetByID(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	usecase := mock.NewMockPokemonUsecase(mockCtrl)
-	ctrl := NewPokemonController(usecase)
+	ctrl := controller.NewPokemonController(usecase)
 
 	for _, tt := range tests {
 		context := mock.NewMockContext(mockCtrl)
@@ -184,7 +185,7 @@ func TestPokemonController_ActionPostById(t *testing.T) {
 			prepare: func(usecase *mock.MockPokemonUsecase, context *mock.MockContext) {
 				_, err := strconv.Atoi("a")
 				context.EXPECT().Param("id").Return("a")
-				context.EXPECT().JSON(400, map[string][]ErrorResponse{"errors": {
+				context.EXPECT().JSON(400, map[string][]controller.ErrorResponse{"errors": {
 					{Message: "Invalid ID param, must be a number", ErrorType: "errors.ErrInvalidRequest"},
 					{Message: err.Error(), ErrorType: "*strconv.NumError"},
 					{Message: "invalid syntax", ErrorType: "*errors.errorString"},
@@ -197,7 +198,7 @@ func TestPokemonController_ActionPostById(t *testing.T) {
 			prepare: func(usecase *mock.MockPokemonUsecase, context *mock.MockContext) {
 				usecase.EXPECT().CreatePokemon(1).Return("", assert.AnError)
 				context.EXPECT().Param("id").Return("1")
-				context.EXPECT().JSON(500, map[string][]ErrorResponse{"errors": {
+				context.EXPECT().JSON(500, map[string][]controller.ErrorResponse{"errors": {
 					{Message: assert.AnError.Error(), ErrorType: "*errors.errorString"},
 				}}).Return(assert.AnError)
 			},
@@ -208,7 +209,7 @@ func TestPokemonController_ActionPostById(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	usecase := mock.NewMockPokemonUsecase(mockCtrl)
-	ctrl := NewPokemonController(usecase)
+	ctrl := controller.NewPokemonController(usecase)
 
 	for _, tt := range tests {
 		context := mock.NewMockContext(mockCtrl)

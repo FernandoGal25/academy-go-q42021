@@ -11,7 +11,7 @@ import (
 
 // Wrapper of controllers.
 type AppController struct {
-	Pokemon PokemonController
+	Pokemon PokemonAction
 }
 
 type ErrorResponse struct {
@@ -45,15 +45,11 @@ BuildResponse:
 		switch err.(type) {
 		case nil:
 			break BuildResponse
-		case customErrors.ErrInvalidRequest:
-			status = http.StatusBadRequest
-		case customErrors.ErrDomainValidation:
+		case customErrors.ErrInvalidRequest, customErrors.ErrDomainValidation:
 			status = http.StatusBadRequest
 		case customErrors.ErrEntityNotFound:
 			status = http.StatusNotFound
-		case customErrors.ErrCSVFormat:
-			status = http.StatusInternalServerError
-		case customErrors.ErrHTTPRequest:
+		case customErrors.ErrHTTPRequest, customErrors.ErrCSVFormat:
 			status = http.StatusInternalServerError
 		}
 
