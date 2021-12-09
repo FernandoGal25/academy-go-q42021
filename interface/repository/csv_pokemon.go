@@ -187,7 +187,12 @@ func (r CSVPokemonRepository) FetchConcurrently(f map[string]interface{}) ([]mod
 	}
 	defer r.Handler.Close()
 
-	records, _ := r.Handler.ReadAll()
+	records, err := r.Handler.ReadAll()
+
+	if err != nil {
+		return nil, customErrors.ErrDatastoreWrapper{Message: "Failed to fetch items", Err: err}
+	}
+
 	jobs := make(chan []string, len(records))
 	results := make(chan model.Pokemon, f["limit"].(int))
 

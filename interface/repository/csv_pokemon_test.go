@@ -1,4 +1,4 @@
-package repository
+package repository_test
 
 import (
 	"strconv"
@@ -7,6 +7,7 @@ import (
 	"github.com/FernandoGal25/academy-go-q42021/domain/model"
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
 	"github.com/FernandoGal25/academy-go-q42021/infrastructure/mock"
+	"github.com/FernandoGal25/academy-go-q42021/interface/repository"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -82,7 +83,7 @@ func TestCSVPokemonRepository_FindByID(t *testing.T) {
 
 	for _, tt := range tests {
 		handler := mock.NewMockFileManager(mockCtrl)
-		repo := NewCSVPokemonRepository(handler)
+		repo := repository.NewCSVPokemonRepository(handler)
 		if tt.prepare != nil {
 			tt.prepare(handler)
 		}
@@ -158,7 +159,7 @@ func TestCSVPokemonRepository_FetchAll(t *testing.T) {
 
 	for _, tt := range tests {
 		handler := mock.NewMockFileManager(mockCtrl)
-		repo := NewCSVPokemonRepository(handler)
+		repo := repository.NewCSVPokemonRepository(handler)
 		if tt.prepare != nil {
 			tt.prepare(handler)
 		}
@@ -219,7 +220,7 @@ func TestCSVPokemonRepository_Persist(t *testing.T) {
 
 	for _, tt := range tests {
 		handler := mock.NewMockFileManager(mockCtrl)
-		repo := NewCSVPokemonRepository(handler)
+		repo := repository.NewCSVPokemonRepository(handler)
 		if tt.prepare != nil {
 			tt.prepare(handler)
 		}

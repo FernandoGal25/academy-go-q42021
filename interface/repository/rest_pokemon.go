@@ -5,24 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 
 	"github.com/FernandoGal25/academy-go-q42021/domain/model"
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
+	"github.com/FernandoGal25/academy-go-q42021/infrastructure/datastore"
 )
 
 // Repository that handles the operations of pokemon in a external REST API.
 type RESTPokemonRepository struct {
-	APIGateway string
+	http datastore.HTTPClient
 }
 
 // Returns an instance of RESTPokemoRepository
-func NewRestPokemonRepository(p string) RESTPokemonRepository {
-	return RESTPokemonRepository{p}
+func NewRestPokemonRepository(http datastore.HTTPClient) RESTPokemonRepository {
+	return RESTPokemonRepository{http}
 }
 
-func getHTTPRequest(endpoint string, i interface{}) error {
-	resp, err := http.Get(endpoint)
+func (r RESTPokemonRepository) getHTTPRequest(endpoint string, i interface{}) error {
+	resp, err := r.http.Get(endpoint)
 
 	if err != nil {
 		return customErrors.ErrHTTPRequest{Message: fmt.Sprintf("Failed request at %v", endpoint), Err: err}
@@ -45,7 +45,7 @@ func getHTTPRequest(endpoint string, i interface{}) error {
 func (r RESTPokemonRepository) FindByID(ID int) (*model.Pokemon, error) {
 	var p model.Pokemon
 
-	if err := getHTTPRequest(fmt.Sprintf("%v/pokemon/%v", r.APIGateway, ID), &p); err != nil {
+	if err := r.getHTTPRequest(fmt.Sprintf("/pokemon/%v", ID), &p); err != nil {
 		return nil, err
 	}
 
@@ -56,7 +56,7 @@ func (r RESTPokemonRepository) FindByID(ID int) (*model.Pokemon, error) {
 func (r RESTPokemonRepository) FetchAll() ([]model.Pokemon, error) {
 	var collection = []model.Pokemon{}
 
-	if err := getHTTPRequest(fmt.Sprintf("%v/pokemon", r.APIGateway), &collection); err != nil {
+	if err := r.getHTTPRequest("/pokemon", &collection); err != nil {
 		return nil, err
 	}
 

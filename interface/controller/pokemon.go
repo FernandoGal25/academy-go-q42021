@@ -73,13 +73,17 @@ func (ic PokemonController) ActionPostByID(c Context) error {
 func adaptFilters(qp url.Values) (map[string]interface{}, error) {
 	filters := make(map[string]interface{})
 
-	if qp["type"][0] == "odd" {
-		filters["id"] = func(id int) bool {
-			return id%2 == 1
-		}
-	} else if qp["type"][0] == "even" {
-		filters["id"] = func(id int) bool {
-			return id%2 == 0
+	if qp["type"] != nil {
+		if qp["type"][0] == "odd" {
+			filters["id"] = func(id int) bool {
+				return id%2 == 1
+			}
+		} else if qp["type"][0] == "even" {
+			filters["id"] = func(id int) bool {
+				return id%2 == 0
+			}
+		} else {
+			return nil, customErrors.ErrInvalidRequest{Message: "Invalid 'type' queryParam, must be 'odd' or 'even'", Err: nil}
 		}
 	} else {
 		filters["id"] = func(id int) bool {

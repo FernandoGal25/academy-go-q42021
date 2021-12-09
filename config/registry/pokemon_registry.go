@@ -23,5 +23,5 @@ func (r registry) NewCSVPokemonRepository() repository.CSVPokemonRepository {
 
 // NewRESTPokemonRepository instances pokemon repository by inyecting an api path.
 func (r registry) NewRESTPokemonRepository() repository.RESTPokemonRepository {
-	return repository.NewRestPokemonRepository(r.api)
+	return repository.NewRestPokemonRepository(r.http)
 }

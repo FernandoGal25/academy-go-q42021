@@ -6,8 +6,8 @@ import (
 )
 
 type registry struct {
-	csv *datastore.CSVHandler
-	api string
+	csv  datastore.FileManager
+	http datastore.HTTPClient
 }
 
 // Registry is the dependency inyector.
@@ -16,8 +16,8 @@ type Registry interface {
 }
 
 // NewRegistry creates new registry.
-func NewRegistry(csv *datastore.CSVHandler, api string) registry {
-	return registry{csv, api}
+func NewRegistry(csv datastore.FileManager, http datastore.HTTPClient) registry {
+	return registry{csv, http}
 }
 
 // Register initializes the dependency inyection.
