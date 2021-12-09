@@ -2,11 +2,19 @@ package controller
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/FernandoGal25/academy-go-q42021/application/usecase"
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
 )
+
+type PokemonAction interface {
+	ActionGetByID(c Context) error
+	ActionGetAll(c Context) error
+	ActionPostByID(c Context) error
+	ActionGetByFilters(c Context) error
+}
 
 // PokemonController handles the request and response of the pokemon endpoints
 type PokemonController struct {
@@ -62,18 +70,20 @@ func (ic PokemonController) ActionPostByID(c Context) error {
 	)
 }
 
-func adaptFilters(c Context) (map[string]interface{}, error) {
+func adaptFilters(qp url.Values) (map[string]interface{}, error) {
 	filters := make(map[string]interface{})
 
-	qp := c.QueryParams()
-
-	if qp["type"][0] == "odd" {
-		filters["id"] = func(id int) bool {
-			return id%2 == 1
-		}
-	} else if qp["type"][0] == "even" {
-		filters["id"] = func(id int) bool {
-			return id%2 == 0
+	if qp["type"] != nil {
+		if qp["type"][0] == "odd" {
+			filters["id"] = func(id int) bool {
+				return id%2 == 1
+			}
+		} else if qp["type"][0] == "even" {
+			filters["id"] = func(id int) bool {
+				return id%2 == 0
+			}
+		} else {
+			return nil, customErrors.ErrInvalidRequest{Message: "Invalid 'type' queryParam, must be 'odd' or 'even'", Err: nil}
 		}
 	} else {
 		filters["id"] = func(id int) bool {
@@ -109,7 +119,7 @@ func adaptFilters(c Context) (map[string]interface{}, error) {
 
 // ActionGetByFilters calls GetPokemonsByFilters.
 func (ic PokemonController) ActionGetByFilters(c Context) error {
-	filters, err := adaptFilters(c)
+	filters, err := adaptFilters(c.QueryParams())
 
 	if err != nil {
 		return responseErrorJSON(c, err)

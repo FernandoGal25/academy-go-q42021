@@ -17,8 +17,9 @@ func main() {
 		return
 	}
 
-	h := datastore.NewCSVHandler(c.CSV.Path)
-	r := registry.NewRegistry(h, c.Rest.Api)
+	handler := datastore.NewCSVHandler(c.CSV.Path)
+	client := datastore.NewHTTPClient(c.Rest.Api)
+	r := registry.NewRegistry(handler, client)
 	e := router.NewRouter(r.Register())
 
 	if err := e.Start(":" + c.Server.Port); err != nil {

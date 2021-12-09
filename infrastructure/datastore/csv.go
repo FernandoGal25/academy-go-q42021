@@ -8,11 +8,20 @@ import (
 	customErrors "github.com/FernandoGal25/academy-go-q42021/error"
 )
 
+type FileManager interface {
+	BuildHandler() error
+	Read() ([]string, error)
+	ReadAll() ([][]string, error)
+	Write(r []string) error
+	GetHeader() []string
+	Close()
+}
+
 // CSVHandler is a wrapper of the CSV file, combines the management of the
 // os and enconding/csv libraries, reads and write from existing CSV files.
 type CSVHandler struct {
 	path      string
-	Schema    []string
+	schema    []string
 	readFile  *os.File
 	writeFile *os.File
 	writer    *csv.Writer
@@ -51,7 +60,7 @@ func (h *CSVHandler) BuildHandler() error {
 		return customErrors.ErrCSVFormat{Message: "Failed to read CSV header", Err: err}
 	}
 
-	h.Schema = header
+	h.schema = header
 
 	return nil
 }
@@ -83,6 +92,11 @@ func (h *CSVHandler) Write(r []string) error {
 	}
 
 	return nil
+}
+
+// GetHeader returns the header of the CSV.
+func (h *CSVHandler) GetHeader() []string {
+	return h.schema
 }
 
 // Close is a method that wraps the os.File method Close, closes the stream

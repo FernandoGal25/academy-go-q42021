@@ -15,12 +15,12 @@ import (
 
 // CSVPokemonRepository is a struct that handles the operations of pokemon in a CSV file.
 type CSVPokemonRepository struct {
-	Handler *datastore.CSVHandler
+	Handler datastore.FileManager
 }
 
 // NewCSVPokemonRepository returns an instance of CSVPokemonRepository.
-func NewCSVPokemonRepository(h *datastore.CSVHandler) CSVPokemonRepository {
-	return CSVPokemonRepository{h}
+func NewCSVPokemonRepository(f datastore.FileManager) CSVPokemonRepository {
+	return CSVPokemonRepository{f}
 }
 
 func (r CSVPokemonRepository) initializeHandler() error {
@@ -37,7 +37,7 @@ func (r CSVPokemonRepository) buildPokemon(p *model.Pokemon, data []string, ID i
 
 	rv := reflect.ValueOf(p).Elem()
 
-	for key, sField := range r.Handler.Schema {
+	for key, sField := range r.Handler.GetHeader() {
 		if sField == "id" {
 			continue
 		}
@@ -187,7 +187,12 @@ func (r CSVPokemonRepository) FetchConcurrently(f map[string]interface{}) ([]mod
 	}
 	defer r.Handler.Close()
 
-	records, _ := r.Handler.ReadAll()
+	records, err := r.Handler.ReadAll()
+
+	if err != nil {
+		return nil, customErrors.ErrDatastoreWrapper{Message: "Failed to fetch items", Err: err}
+	}
+
 	jobs := make(chan []string, len(records))
 	results := make(chan model.Pokemon, f["limit"].(int))
 

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -12,7 +11,7 @@ import (
 
 // Wrapper of controllers.
 type AppController struct {
-	Pokemon PokemonController
+	Pokemon PokemonAction
 }
 
 type ErrorResponse struct {
@@ -31,7 +30,6 @@ func parseIDParam(c Context) (int, error) {
 
 func responseJSON(c Context, result interface{}, code int) error {
 	if err := c.JSON(code, result); err != nil {
-		log.Fatalln(err)
 		return err
 	}
 
@@ -47,15 +45,11 @@ BuildResponse:
 		switch err.(type) {
 		case nil:
 			break BuildResponse
-		case customErrors.ErrInvalidRequest:
-			status = http.StatusBadRequest
-		case customErrors.ErrDomainValidation:
+		case customErrors.ErrInvalidRequest, customErrors.ErrDomainValidation:
 			status = http.StatusBadRequest
 		case customErrors.ErrEntityNotFound:
 			status = http.StatusNotFound
-		case customErrors.ErrCSVFormat:
-			status = http.StatusInternalServerError
-		case customErrors.ErrHTTPRequest:
+		case customErrors.ErrHTTPRequest, customErrors.ErrCSVFormat:
 			status = http.StatusInternalServerError
 		}
 
